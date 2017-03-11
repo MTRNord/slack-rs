@@ -8,7 +8,7 @@ description = "slack realtime messaging client: https://api.slack.com/bot-users"
 license = "Apache-2.0"
 
 [dependencies]
-websocket = "0.17.1"
-hyper = "0.9.5"
+websocket = { git = "https://github.com/MTRNord/rust-websocket", branch = "openssl-0.9" }
+hyper = "0.10.5"
 rustc-serialize = "0.3.18"
 slack_api = "0.15.0"
