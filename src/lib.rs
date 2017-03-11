@@ -177,7 +177,7 @@ impl RtmClient {
     /// / Only valid after login, otherwise None.
     pub fn get_team(&self) -> Option<Team> {
         match self.start_info {
-            Some(ref s) => Some(s.team.clone()),
+            Some(ref s) => Some(s.team.unwrap().clone()),
             None => None,
         }
     }
@@ -240,7 +240,7 @@ impl RtmClient {
     /// Only valid after login, otherwise None.
     pub fn get_start_ims(&self) -> Option<Vec<Im>> {
         match self.start_info {
-            Some(ref s) => Some(s.ims.clone()),
+            Some(ref s) => Some(s.ims.unwrap().clone()),
             None => None,
         }
     }
@@ -344,7 +344,7 @@ impl RtmClient {
         let start = try!(api::rtm::start(&client, &self.token, None));
 
         // websocket url
-        let wss_url = try!(reqwest::Url::parse(&start.url));
+        let wss_url = try!(reqwest::Url::parse(&start.url.unwrap()));
 
         // update id hashmaps
         for ref channel in start.channels.iter() {
@@ -357,9 +357,9 @@ impl RtmClient {
             self.user_ids.insert(user.name.clone(), user.id.clone());
         }
         // update groups, users, channels:
-        self.groups = start.groups.clone();
-        self.channels = start.channels.clone();
-        self.users = start.users.clone();
+        self.groups = start.groups.unwrap().clone();
+        self.channels = start.channels.unwrap().clone();
+        self.users = start.users.unwrap().clone();
 
         // store rtm.Start data
         self.start_info = Some(start);
@@ -566,7 +566,7 @@ impl RtmClient {
         let client = reqwest::Client::new();
         let data = try!(api::users::list(&client, &self.token, None));
 
-        Ok(data.members)
+        Ok(data.members.unwrap())
     }
 
     /// Uses https://api.slack.com/methods/channels.list to get a list of channels
@@ -574,7 +574,7 @@ impl RtmClient {
         let client = reqwest::Client::new();
         let data = try!(api::channels::list(&client, &self.token, None));
 
-        Ok(data.channels)
+        Ok(data.channels.unwrap())
     }
 
     /// Uses https://api.slack.com/methods/groups.list to get a list of groups
@@ -582,7 +582,7 @@ impl RtmClient {
         let client = reqwest::Client::new();
         let data = try!(api::groups::list(&client, &self.token, None));
 
-        Ok(data.groups)
+        Ok(data.groups.unwrap())
     }
 
     /// Uses https://api.slack.com/methods/users.list to update users
@@ -592,7 +592,7 @@ impl RtmClient {
         // update user id map
         self.user_ids.clear();
         for ref user in users.iter() {
-            self.user_ids.insert(user.name.clone(), user.id.clone());
+            self.user_ids.insert(user.name.unwrap().clone(), user.id.unwrap().clone());
         }
         // update users
         self.users = users.clone();
@@ -607,7 +607,7 @@ impl RtmClient {
         // update channel id map
         self.channel_ids.clear();
         for ref channel in channels.iter() {
-            self.channel_ids.insert(channel.name.clone(), channel.id.clone());
+            self.channel_ids.insert(channel.name.unwrap().clone(), channel.id.unwrap().clone());
         }
         // update users
         self.channels = channels.clone();
@@ -621,7 +621,7 @@ impl RtmClient {
         // update group id map
         self.group_ids.clear();
         for ref group in groups.iter() {
-            self.group_ids.insert(group.name.clone(), group.id.clone());
+            self.group_ids.insert(group.name.unwrap().clone(), group.id.unwrap().clone());
         }
         // update users
         self.groups = groups.clone();
