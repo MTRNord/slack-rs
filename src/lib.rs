@@ -18,7 +18,7 @@
 //! See [CHANGELOG.md](https://github.com/slack-rs/slack-rs/blob/master/CHANGELOG.md) for latest
 //! release notes.
 
-extern crate hyper;
+extern crate reqwest;
 extern crate websocket;
 extern crate rustc_serialize;
 pub extern crate slack_api as api;
@@ -340,11 +340,11 @@ impl RtmClient {
     /// Logs in to slack. Call this before calling run.
     /// Alternatively use login_and_run
     pub fn login(&mut self) -> Result<(WsClient, mpsc::Receiver<WsMessage>), Error> {
-        let client = hyper::Client::new();
+        let client = reqwest::Client::new();
         let start = try!(api::rtm::start(&client, &self.token, None, None));
 
         // websocket url
-        let wss_url = try!(hyper::Url::parse(&start.url).map_err(|e| hyper::Error::Uri(e)));
+        let wss_url = try!(reqwest::Url::parse(&start.url).map_err(|e| reqwest::Error::Uri(e)));
 
         // update id hashmaps
         for ref channel in start.channels.iter() {
@@ -563,7 +563,7 @@ impl RtmClient {
 
     /// Uses https://api.slack.com/methods/users.list to get a list of users
     pub fn list_users(&mut self) -> Result<Vec<User>, Error> {
-        let client = hyper::Client::new();
+        let client = reqwest::Client::new();
         let data = try!(api::users::list(&client, &self.token, None));
 
         Ok(data.members)
@@ -571,7 +571,7 @@ impl RtmClient {
 
     /// Uses https://api.slack.com/methods/channels.list to get a list of channels
     pub fn list_channels(&mut self) -> Result<Vec<Channel>, Error> {
-        let client = hyper::Client::new();
+        let client = reqwest::Client::new();
         let data = try!(api::channels::list(&client, &self.token, None));
 
         Ok(data.channels)
@@ -579,7 +579,7 @@ impl RtmClient {
 
     /// Uses https://api.slack.com/methods/groups.list to get a list of groups
     pub fn list_groups(&mut self) -> Result<Vec<Group>, Error> {
-        let client = hyper::Client::new();
+        let client = reqwest::Client::new();
         let data = try!(api::groups::list(&client, &self.token, None));
 
         Ok(data.groups)
@@ -642,7 +642,7 @@ impl RtmClient {
             }
             false => channel,
         };
-        let client = hyper::Client::new();
+        let client = reqwest::Client::new();
         api::chat::post_message(&client,
                                 &self.token,
                                 chan_id,
@@ -671,8 +671,8 @@ impl RtmClient {
             }
             false => channel,
         };
-        let client = hyper::Client::new();
-        api::chat::delete(&client, &self.token, timestamp, chan_id).map_err(|e| e.into())
+        let client = reqwest::Client::new();
+        api::chat::delete(&client, &self.token, chan_id).map_err(|e| e.into())
     }
 
     /// Wraps https://api.slack.com/methods/channels.mark to set the read cursor in a channel
@@ -688,7 +688,7 @@ impl RtmClient {
             }
             false => channel,
         };
-        let client = hyper::Client::new();
+        let client = reqwest::Client::new();
         api::channels::mark(&client, &self.token, chan_id, timestamp).map_err(|e| e.into())
     }
 
@@ -709,7 +709,7 @@ impl RtmClient {
         // this will json format the string, which should escape it,
         // we'll need to slice out the quotes around it afterwards
         let escaped_topic = format!("{}", json::as_json(&topic));
-        let client = hyper::Client::new();
+        let client = reqwest::Client::new();
         api::channels::set_topic(&client,
                                  &self.token,
                                  chan_id,
@@ -733,7 +733,7 @@ impl RtmClient {
         // this will json format the string, which should escape it,
         // we'll need to slice out the quotes around it afterwards
         let escaped_purpose = format!("{}", json::as_json(&purpose));
-        let client = hyper::Client::new();
+        let client = reqwest::Client::new();
         api::channels::set_purpose(&client,
                                    &self.token,
                                    chan_id,
@@ -753,7 +753,7 @@ impl RtmClient {
             }
             false => channel,
         };
-        let client = hyper::Client::new();
+        let client = reqwest::Client::new();
         api::reactions::add(&client,
                             &self.token,
                             emoji_name,
@@ -765,7 +765,7 @@ impl RtmClient {
 
     /// Wraps https://api.slack.com/methods/reactions.add to add an emoji reaction to a file
     pub fn add_reaction_file(&self, emoji_name: &str, file: &str) -> Result<api::reactions::AddResponse, Error> {
-        let client = hyper::Client::new();
+        let client = reqwest::Client::new();
         api::reactions::add(&client,
                             &self.token,
                             emoji_name,
@@ -777,7 +777,7 @@ impl RtmClient {
 
     /// Wraps https://api.slack.com/methods/reactions.add to add an emoji reaction to a file comment
     pub fn add_reaction_file_comment(&self, emoji_name: &str, file_comment: &str) -> Result<api::reactions::AddResponse, Error> {
-        let client = hyper::Client::new();
+        let client = reqwest::Client::new();
         api::reactions::add(&client,
                             &self.token,
                             emoji_name,
@@ -801,7 +801,7 @@ impl RtmClient {
             }
             false => channel,
         };
-        let client = hyper::Client::new();
+        let client = reqwest::Client::new();
         api::chat::update(&client,
                           &self.token,
                           timestamp,
@@ -814,7 +814,7 @@ impl RtmClient {
 
     /// Wraps https://api.slack.com/methods/im.open to open a direct message channel with a user.
     pub fn im_open(&self, user_id: &str) -> Result<api::im::OpenResponse, Error> {
-        let client = hyper::Client::new();
+        let client = reqwest::Client::new();
         api::im::open(&client, &self.token, user_id).map_err(|e| e.into())
     }
 
@@ -827,7 +827,7 @@ impl RtmClient {
                             inclusive: Option<bool>,
                             count: Option<u32>)
                             -> Result<api::channels::HistoryResponse, Error> {
-        let client = hyper::Client::new();
+        let client = reqwest::Client::new();
         api::channels::history(&client,
                                &self.token,
                                channel_id,
@@ -839,7 +839,7 @@ impl RtmClient {
 
     /// Wraps https://api.slack.com/methods/im.close to close a direct message channel.
     pub fn im_close(&self, channel_id: &str) -> Result<api::im::CloseResponse, Error> {
-        let client = hyper::Client::new();
+        let client = reqwest::Client::new();
         api::im::close(&client, &self.token, channel_id).map_err(|e| e.into())
     }
 
@@ -852,7 +852,7 @@ impl RtmClient {
                       inclusive: Option<bool>,
                       count: Option<u32>)
                       -> Result<api::im::HistoryResponse, Error> {
-        let client = hyper::Client::new();
+        let client = reqwest::Client::new();
         api::im::history(&client,
                          &self.token,
                          channel_id,
@@ -865,14 +865,14 @@ impl RtmClient {
     /// Wraps https://api.slack.com/methods/im.list to get the list of all open direct message
     /// channels the user has open.
     pub fn im_list(&self) -> Result<api::im::ListResponse, Error> {
-        let client = hyper::Client::new();
+        let client = reqwest::Client::new();
         api::im::list(&client, &self.token).map_err(|e| e.into())
     }
 
     /// Wraps https://api.slack.com/methods/im.mark to move the read cursor in a direct message
     /// channel.
     pub fn im_mark(&self, channel_id: &str, timestamp: &str) -> Result<api::im::MarkResponse, Error> {
-        let client = hyper::Client::new();
+        let client = reqwest::Client::new();
         api::im::mark(&client, &self.token, channel_id, timestamp).map_err(|e| e.into())
     }
 }
