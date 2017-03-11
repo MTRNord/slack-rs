@@ -26,7 +26,7 @@ pub extern crate slack_api as api;
 pub mod error;
 pub use error::Error;
 
-pub use api::{Attachment, Channel, Group, Im, Team, User, Message};
+pub use api::{Channel, Group, Im, Team, User, Message};
 
 mod events;
 pub use events::Event;
