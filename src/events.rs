@@ -14,7 +14,8 @@
 // limitations under the License.
 //
 
-use api::{Message, Item, File, Channel, Comment, User};
+use api::{Message, File, Channel, User};
+use api::mods::{Item, Comment}; 
 use api::rtm::Bot;
 use rustc_serialize::{Decodable, Decoder};
 
