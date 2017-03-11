@@ -15,7 +15,7 @@
 //
 
 use api::{Message, File, Channel, User};
-use api::{Item, Comment};
+// use api::{Item, Comment};
 use api::Bot;
 use rustc_serialize::{Decodable, Decoder};
 
@@ -206,41 +206,41 @@ pub enum Event {
     /// Represents the slack
     /// [`file_comment_added`](https://api.slack.com/events/file_comment_added)
     /// event.
-    FileCommentAdded {
-        file: File,
-        comment: Comment,
-    },
+//     FileCommentAdded {
+//         file: File,
+//         comment: Comment,
+//     },
     /// Represents the slack
     /// [`file_comment_edited`](https://api.slack.com/events/file_comment_edited)
     /// event.
-    FileCommentEdited {
-        file: File,
-        comment: Comment,
-    },
+//     FileCommentEdited {
+//         file: File,
+//         comment: Comment,
+//     },
     /// Represents the slack
     /// [`file_comment_deleted`](https://api.slack.com/events/file_comment_deleted)
     /// event.
-    FileCommentDeleted {
-        file: File,
-        comment: String,
-    },
+//     FileCommentDeleted {
+//         file: File,
+//         comment: String,
+//     },
     /// Represents the slack [`pin_added`](https://api.slack.com/events/pin_added)
     /// event.
-    PinAdded {
-        user: String,
-        channel_id: String,
-        item: Item,
-        event_ts: String,
-    },
+//     PinAdded {
+//         user: String,
+//         channel_id: String,
+//         item: Item,
+//         event_ts: String,
+//     },
     /// Represents the slack
     /// [`pin_removed`](https://api.slack.com/events/pin_removed) event.
-    PinRemoved {
-        user: String,
-        channel_id: String,
-        item: Item,
-        has_pins: bool,
-        event_ts: String,
-    },
+//     PinRemoved {
+//         user: String,
+//         channel_id: String,
+//         item: Item,
+//         has_pins: bool,
+//         event_ts: String,
+//     },
     /// Represents the slack
     /// [`presence_change`](https://api.slack.com/events/presence_change) event.
     PresenceChange {
@@ -271,36 +271,36 @@ pub enum Event {
     },
     /// Represents the slack
     /// [`star_added`](https://api.slack.com/events/star_added) event.
-    StarAdded {
-        user: String,
-        item: Item,
-        event_ts: String,
-    },
+//     StarAdded {
+//         user: String,
+//         item: Item,
+//         event_ts: String,
+//     },
     /// Represents the slack
     /// [`star_removed`](https://api.slack.com/events/star_removed) event.
-    StarRemoved {
-        user: String,
-        item: Item,
-        event_ts: String,
-    },
+//     StarRemoved {
+//         user: String,
+//         item: Item,
+//         event_ts: String,
+//     },
     /// Represents the slack
     /// [`reaction_added`](https://api.slack.com/events/reaction_added) event.
-    ReactionAdded {
-        user: String,
-        reaction: String,
-        item: Item,
-        item_user: String,
-        event_ts: String,
-    },
+//     ReactionAdded {
+//         user: String,
+//         reaction: String,
+//         item: Item,
+//         item_user: String,
+//         event_ts: String,
+//     },
     /// Represents the slack
     /// [`reaction_removed`](https://api.slack.com/events/reaction_removed) event.
-    ReactionRemoved {
-        user: String,
-        reaction: String,
-        item: Item,
-        item_user: String,
-        event_ts: String,
-    },
+//     ReactionRemoved {
+//         user: String,
+//         reaction: String,
+//         item: Item,
+//         item_user: String,
+//         event_ts: String,
+//     },
     /// Represents the slack
     /// [`emoji_changed`](https://api.slack.com/event/emoji_changed) event.
     EmojiChanged {
@@ -495,31 +495,31 @@ impl Decodable for Event {
                         file_id: try!(d.read_struct_field("file_id", 0, |d| Decodable::decode(d))),
                         event_ts: try!(d.read_struct_field("event_ts", 0, |d| Decodable::decode(d))),
                     }),
-                    "file_comment_added" => Ok(Event::FileCommentAdded {
-                        file: try!(d.read_struct_field("file", 0, |d| Decodable::decode(d))),
-                        comment: try!(d.read_struct_field("comment", 0, |d| Decodable::decode(d))),
-                    }),
-                    "file_comment_edited" => Ok(Event::FileCommentEdited {
-                        file: try!(d.read_struct_field("file", 0, |d| Decodable::decode(d))),
-                        comment: try!(d.read_struct_field("comment", 0, |d| Decodable::decode(d))),
-                    }),
-                    "file_comment_deleted" => Ok(Event::FileCommentDeleted {
-                        file: try!(d.read_struct_field("file", 0, |d| Decodable::decode(d))),
-                        comment: try!(d.read_struct_field("comment", 0, |d| Decodable::decode(d))),
-                    }),
-                    "pin_added" => Ok(Event::PinAdded {
-                        user: try!(d.read_struct_field("user", 0, |d| Decodable::decode(d))),
-                        channel_id: try!(d.read_struct_field("channel_id", 0, |d| Decodable::decode(d))),
-                        item: try!(d.read_struct_field("item", 0, |d| Decodable::decode(d))),
-                        event_ts: try!(d.read_struct_field("event_ts", 0, |d| Decodable::decode(d))),
-                    }),
-                    "pin_removed" => Ok(Event::PinRemoved {
-                        user: try!(d.read_struct_field("user", 0, |d| Decodable::decode(d))),
-                        channel_id: try!(d.read_struct_field("channel_id", 0, |d| Decodable::decode(d))),
-                        item: try!(d.read_struct_field("item", 0, |d| Decodable::decode(d))),
-                        has_pins: try!(d.read_struct_field("has_pins", 0, |d| Decodable::decode(d))),
-                        event_ts: try!(d.read_struct_field("event_ts", 0, |d| Decodable::decode(d))),
-                    }),
+//                     "file_comment_added" => Ok(Event::FileCommentAdded {
+//                         file: try!(d.read_struct_field("file", 0, |d| Decodable::decode(d))),
+//                         comment: try!(d.read_struct_field("comment", 0, |d| Decodable::decode(d))),
+//                     }),
+//                     "file_comment_edited" => Ok(Event::FileCommentEdited {
+//                         file: try!(d.read_struct_field("file", 0, |d| Decodable::decode(d))),
+//                         comment: try!(d.read_struct_field("comment", 0, |d| Decodable::decode(d))),
+//                     }),
+//                     "file_comment_deleted" => Ok(Event::FileCommentDeleted {
+//                         file: try!(d.read_struct_field("file", 0, |d| Decodable::decode(d))),
+//                         comment: try!(d.read_struct_field("comment", 0, |d| Decodable::decode(d))),
+//                     }),
+//                     "pin_added" => Ok(Event::PinAdded {
+//                         user: try!(d.read_struct_field("user", 0, |d| Decodable::decode(d))),
+//                         channel_id: try!(d.read_struct_field("channel_id", 0, |d| Decodable::decode(d))),
+//                         item: try!(d.read_struct_field("item", 0, |d| Decodable::decode(d))),
+//                         event_ts: try!(d.read_struct_field("event_ts", 0, |d| Decodable::decode(d))),
+//                     }),
+//                     "pin_removed" => Ok(Event::PinRemoved {
+//                         user: try!(d.read_struct_field("user", 0, |d| Decodable::decode(d))),
+//                         channel_id: try!(d.read_struct_field("channel_id", 0, |d| Decodable::decode(d))),
+//                         item: try!(d.read_struct_field("item", 0, |d| Decodable::decode(d))),
+//                         has_pins: try!(d.read_struct_field("has_pins", 0, |d| Decodable::decode(d))),
+//                         event_ts: try!(d.read_struct_field("event_ts", 0, |d| Decodable::decode(d))),
+//                     }),
                     "presence_change" => Ok(Event::PresenceChange {
                         user: try!(d.read_struct_field("user", 0, |d| Decodable::decode(d))),
                         presence: try!(d.read_struct_field("presence", 0, |d| Decodable::decode(d))),
@@ -537,30 +537,30 @@ impl Decodable for Event {
                     "team_join" => Ok(Event::TeamJoin {
                         user: try!(d.read_struct_field("user", 0, |d| Decodable::decode(d))),
                     }),
-                    "star_added" => Ok(Event::StarAdded {
-                        user: try!(d.read_struct_field("user", 0, |d| Decodable::decode(d))),
-                        item: try!(d.read_struct_field("item", 0, |d| Decodable::decode(d))),
-                        event_ts: try!(d.read_struct_field("event_ts", 0, |d| Decodable::decode(d))),
-                    }),
-                    "star_removed" => Ok(Event::StarRemoved {
-                        user: try!(d.read_struct_field("user", 0, |d| Decodable::decode(d))),
-                        item: try!(d.read_struct_field("item", 0, |d| Decodable::decode(d))),
-                        event_ts: try!(d.read_struct_field("event_ts", 0, |d| Decodable::decode(d))),
-                    }),
-                    "reaction_added" => Ok(Event::ReactionAdded {
-                        user: try!(d.read_struct_field("user", 0, |d| Decodable::decode(d))),
-                        reaction: try!(d.read_struct_field("name", 0, |d| Decodable::decode(d))),
-                        item: try!(d.read_struct_field("item", 0, |d| Decodable::decode(d))),
-                        item_user: try!(d.read_struct_field("item_user", 0, |d| Decodable::decode(d))),
-                        event_ts: try!(d.read_struct_field("event_ts", 0, |d| Decodable::decode(d))),
-                    }),
-                    "reaction_removed" => Ok(Event::ReactionRemoved {
-                        user: try!(d.read_struct_field("user", 0, |d| Decodable::decode(d))),
-                        reaction: try!(d.read_struct_field("name", 0, |d| Decodable::decode(d))),
-                        item: try!(d.read_struct_field("item", 0, |d| Decodable::decode(d))),
-                        item_user: try!(d.read_struct_field("item_user", 0, |d| Decodable::decode(d))),
-                        event_ts: try!(d.read_struct_field("event_ts", 0, |d| Decodable::decode(d))),
-                      }),
+//                     "star_added" => Ok(Event::StarAdded {
+//                         user: try!(d.read_struct_field("user", 0, |d| Decodable::decode(d))),
+//                         item: try!(d.read_struct_field("item", 0, |d| Decodable::decode(d))),
+//                         event_ts: try!(d.read_struct_field("event_ts", 0, |d| Decodable::decode(d))),
+//                     }),
+//                     "star_removed" => Ok(Event::StarRemoved {
+//                         user: try!(d.read_struct_field("user", 0, |d| Decodable::decode(d))),
+//                         item: try!(d.read_struct_field("item", 0, |d| Decodable::decode(d))),
+//                         event_ts: try!(d.read_struct_field("event_ts", 0, |d| Decodable::decode(d))),
+//                     }),
+//                     "reaction_added" => Ok(Event::ReactionAdded {
+//                         user: try!(d.read_struct_field("user", 0, |d| Decodable::decode(d))),
+//                         reaction: try!(d.read_struct_field("name", 0, |d| Decodable::decode(d))),
+//                         item: try!(d.read_struct_field("item", 0, |d| Decodable::decode(d))),
+//                         item_user: try!(d.read_struct_field("item_user", 0, |d| Decodable::decode(d))),
+//                         event_ts: try!(d.read_struct_field("event_ts", 0, |d| Decodable::decode(d))),
+//                     }),
+//                     "reaction_removed" => Ok(Event::ReactionRemoved {
+//                         user: try!(d.read_struct_field("user", 0, |d| Decodable::decode(d))),
+//                         reaction: try!(d.read_struct_field("name", 0, |d| Decodable::decode(d))),
+//                         item: try!(d.read_struct_field("item", 0, |d| Decodable::decode(d))),
+//                         item_user: try!(d.read_struct_field("item_user", 0, |d| Decodable::decode(d))),
+//                         event_ts: try!(d.read_struct_field("event_ts", 0, |d| Decodable::decode(d))),
+//                       }),
                     "emoji_changed" => Ok(Event::EmojiChanged {
                         event_ts: try!(d.read_struct_field("event_ts", 0, |d| Decodable::decode(d))),
                     }),
