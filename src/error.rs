@@ -19,7 +19,7 @@ use std::io;
 use std::error;
 use std::string::FromUtf8Error;
 
-use hyper;
+use reqwest;
 use websocket;
 use rustc_serialize;
 // use api;
@@ -28,13 +28,13 @@ use rustc_serialize;
 #[derive(Debug)]
 pub enum Error {
     /// Http client error
-    Http(hyper::Error),
+    Http(reqwest::Error),
     /// WebSocket connection error
     WebSocket(websocket::result::WebSocketError),
     /// Error decoding websocket text frame Utf8
     Utf8(FromUtf8Error),
     /// Error parsing url
-    Url(hyper::Error),
+    Url(reqwest::Error),
     /// Error decoding Json
     JsonDecode(rustc_serialize::json::DecoderError),
     /// Error parsing Json
@@ -47,10 +47,10 @@ pub enum Error {
     Internal(String),
 }
 
-impl From<hyper::Error> for Error {
-    fn from(err: hyper::Error) -> Error {
+impl From<reqwest::Error> for Error {
+    fn from(err: reqwest::Error) -> Error {
         match err {
-            hyper::Error::Uri(_) => Error::Url(err),
+            reqwest::Error::Uri(_) => Error::Url(err),
             _ => Error::Http(err)
         }
     }
@@ -101,7 +101,7 @@ impl From<FromUtf8Error> for Error {
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            Error::Http(ref e) => write!(f, "Http (hyper) Error: {:?}", e),
+            Error::Http(ref e) => write!(f, "Http (reqwest) Error: {:?}", e),
             Error::WebSocket(ref e) => write!(f, "Websocket Error: {:?}", e),
             Error::Utf8(ref e) => write!(f, "Utf8 decode Error: {:?}", e),
             Error::Url(ref e) => write!(f, "Url Error: {:?}", e),
