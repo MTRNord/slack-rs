@@ -11,4 +11,4 @@ license = "Apache-2.0"
 websocket = { git = "https://github.com/MTRNord/rust-websocket", branch = "openssl-0.9" }
 hyper = "0.10.5"
 rustc-serialize = "0.3.18"
-slack_api = "0.15.0"
+slack_api = { git = "https://github.com/MTRNord/slack-rs-api", branch = "slack-fix" }
