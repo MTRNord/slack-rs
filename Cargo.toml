@@ -9,6 +9,6 @@ license = "Apache-2.0"
 
 [dependencies]
 websocket = { git = "https://github.com/asayers/rust-websocket", branch = "openssl-0.9" }
-reqwest = { version = "0.4.0", optional = true }
+reqwest = "0.4.0"
 rustc-serialize = "0.3.18"
 slack_api = { git = "https://github.com/MTRNord/slack-rs-api", branch = "slack-fix2" }
