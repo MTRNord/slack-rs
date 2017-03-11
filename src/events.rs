@@ -15,7 +15,8 @@
 //
 
 use api::{Message, File, Channel, User};
-use api::mods::{Item, Comment}; 
+//use api::mods::{Item, Comment};
+use api::types::Bot;
 use rustc_serialize::{Decodable, Decoder};
 
 /// Represents Slack [rtm event](https://api.slack.com/rtm) types.
