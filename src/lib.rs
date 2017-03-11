@@ -159,7 +159,7 @@ impl RtmClient {
     /// Only valid after login, otherwise None.
     pub fn get_name(&self) -> Option<String> {
         match self.start_info {
-            Some(ref s) => Some(s.bots.unwrap().name.clone()),
+            Some(ref s) => Some(s.bots.unwrap()[0].name.clone()),
             None => None,
         }
     }
@@ -168,7 +168,7 @@ impl RtmClient {
     /// Only valid after login, otherwise None.
     pub fn get_id(&self) -> Option<String> {
         match self.start_info {
-            Some(ref s) => Some(s.bots.unwrap().id.clone()),
+            Some(ref s) => Some(s.bots.unwrap()[0].id.clone()),
             None => None,
         }
     }
