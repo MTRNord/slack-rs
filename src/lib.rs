@@ -344,7 +344,7 @@ impl RtmClient {
         let start = try!(api::rtm::start(&client, &self.token, None));
 
         // websocket url
-        let wss_url = try!(reqwest::Url::parse(&start.url).map_err(|e| reqwest::Error::Uri(e)));
+        let wss_url = try!(reqwest::Url::parse(&start.url));
 
         // update id hashmaps
         for ref channel in start.channels.iter() {
