@@ -341,7 +341,7 @@ impl RtmClient {
     /// Alternatively use login_and_run
     pub fn login(&mut self) -> Result<(WsClient, mpsc::Receiver<WsMessage>), Error> {
         let client = reqwest::Client::new();
-        let start = try!(api::rtm::start(&client, &self.token, None, None));
+        let start = try!(api::rtm::start(&client, &self.token, None));
 
         // websocket url
         let wss_url = try!(reqwest::Url::parse(&start.url).map_err(|e| reqwest::Error::Uri(e)));
