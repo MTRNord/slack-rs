@@ -15,7 +15,7 @@
 //
 
 use api::{Message, File, Channel, User};
-//use api::mods::{Item, Comment};
+use api::{Item, Comment};
 use api::Bot;
 use rustc_serialize::{Decodable, Decoder};
 
