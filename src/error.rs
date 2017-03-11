@@ -22,7 +22,7 @@ use std::string::FromUtf8Error;
 use hyper;
 use websocket;
 use rustc_serialize;
-use api;
+// use api;
 
 /// slack::Error represents errors that can happen while using the RtmClient
 #[derive(Debug)]
@@ -92,11 +92,11 @@ impl From<FromUtf8Error> for Error {
     }
 }
 
-impl From<api::Error> for Error {
-    fn from(err: api::Error) -> Error {
-        Error::Api(format!("{}", err))
-    }
-}
+// impl From<api::Error> for Error {
+//     fn from(err: api::Error) -> Error {
+//         Error::Api(format!("{}", err))
+//     }
+// }
 
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
