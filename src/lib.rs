@@ -345,34 +345,34 @@ impl RtmClient {
         let start = api::rtm::start(&client, &self.token, &request);
 
         // websocket url
-        let wss_url = reqwest::Url::parse(&start.url.unwrap());
+        let wss_url = reqwest::Url::parse(&start.unwrap().url.unwrap());
 
         // update id hashmaps
-        for ref channel_raw in start.channels.iter() {
+        for ref channel_raw in start.unwrap().channels.iter() {
             for ref channel in channel_raw.iter() {
                 self.channel_ids.insert(channel.name.unwrap().clone(), channel.id.unwrap().clone());
             }
         }
-        for ref group_raw in start.groups.iter() {
+        for ref group_raw in start.unwrap().groups.iter() {
             for ref group in group_raw.iter() {
                 self.group_ids.insert(group.name.unwrap().clone(), group.id.unwrap().clone());
            }
         }
-        for ref user_raw in start.users.iter() {
+        for ref user_raw in start.unwrap().users.iter() {
             for ref user in user_raw.iter() {
                 self.user_ids.insert(user.name.unwrap().clone(), user.id.unwrap().clone());
             }
         }
         // update groups, users, channels:
-        self.groups = start.groups.unwrap().clone();
-        self.channels = start.channels.unwrap().clone();
-        self.users = start.users.unwrap().clone();
+        self.groups = start.unwrap().groups.unwrap().clone();
+        self.channels = start.unwrap().channels.unwrap().clone();
+        self.users = start.unwrap().users.unwrap().clone();
 
         // store rtm.Start data
         self.start_info = Some(start);
 
         // Do websocket connection request
-        let req = try!(websocket::client::Client::connect(wss_url.clone()));
+        let req = websocket::client::Client::connect(wss_url.clone());
 
         // Do websocket handshake.
         let res = try!(req.send());
@@ -574,16 +574,16 @@ impl RtmClient {
         let request = api::users::ListRequest {presence: None};
         let data = api::users::list(&client, &self.token, &request);
 
-        Ok(data.members.unwrap())
+        Ok(data.unwrap().members.unwrap())
     }
 
     /// Uses https://api.slack.com/methods/channels.list to get a list of channels
     pub fn list_channels(&mut self) -> Result<Vec<Channel>, Error> {
         let client = reqwest::Client::new().unwrap();
-        let request = api::users::ListRequest {presence: None};
+        let request = api::channels::ListRequest {exclude_archived: None};
         let data = api::channels::list(&client, &self.token, &request);
 
-        Ok(data.channels.unwrap())
+        Ok(data.unwrap().channels.unwrap())
     }
 
     /// Uses https://api.slack.com/methods/groups.list to get a list of groups
@@ -592,7 +592,7 @@ impl RtmClient {
         let request = api::groups::ListRequest {exclude_archived: None};
         let data = api::groups::list(&client, &self.token, &request);
 
-        Ok(data.groups.unwrap())
+        Ok(data.unwrap().groups.unwrap())
     }
 
     /// Uses https://api.slack.com/methods/users.list to update users
@@ -641,7 +641,7 @@ impl RtmClient {
     /// Wraps https://api.slack.com/methods/chat.postMessage
     /// json_payload can be a json formatted action or simple text that will be posted as a message.
     /// See https://api.slack.com/docs/formatting
-    pub fn post_message(&self, channel: &str, json_payload: &str, attachments: Option<&str>) -> Result<api::chat::PostMessageResponse, Error> {
+    pub fn post_message(&self, channel: &str, json_payload: &str, attachments: Option<&str>) -> Result<PostMessageResponse, PostMessageError<R::Error>> {
         // fixup the channel id if channel is: `#<channel>`
         let chan_id = match channel.starts_with("#") {
             true => {
