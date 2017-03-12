@@ -349,17 +349,17 @@ impl RtmClient {
         // update id hashmaps
         for ref channel_raw in start.channels.iter() {
             for ref channel in channel_raw.iter() {
-                self.channel_ids.insert(channel.name.clone(), channel.id.clone());
+                self.channel_ids.insert(channel.name.unwrap().clone(), channel.id.unwrap().clone());
             }
         }
         for ref group_raw in start.groups.iter() {
             for ref group in group_raw.iter() {
-                self.group_ids.insert(group.name.clone(), group.id.clone());
+                self.group_ids.insert(group.name.unwrap().clone(), group.id.unwrap().clone());
            }
         }
         for ref user_raw in start.users.iter() {
             for ref user in user_raw.iter() {
-                self.user_ids.insert(user.name.clone(), user.id.clone());
+                self.user_ids.insert(user.name.unwrap().clone(), user.id.unwrap().clone());
             }
         }
         // update groups, users, channels:
