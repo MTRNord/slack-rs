@@ -369,13 +369,13 @@ impl RtmClient {
         self.users = start.unwrap().users.unwrap().clone();
 
         // store rtm.Start data
-        self.start_info = Some(start);
+        self.start_info = start;
 
         // Do websocket connection request
-        let req = websocket::client::Client::connect(wss_url.clone());
+        let req = websocket::client::Client::connect(wss_url.unwrap().clone());
 
         // Do websocket handshake.
-        let res = try!(req.send());
+        let res = req.send();
 
         // Validate handshake
         try!(res.validate());
@@ -641,7 +641,7 @@ impl RtmClient {
     /// Wraps https://api.slack.com/methods/chat.postMessage
     /// json_payload can be a json formatted action or simple text that will be posted as a message.
     /// See https://api.slack.com/docs/formatting
-    pub fn post_message(&self, channel: &str, json_payload: &str, attachments: Option<&str>) -> Result<PostMessageResponse, PostMessageError<R::Error>> {
+    pub fn post_message(&self, channel: &str, json_payload: &str, attachments: Option<&str>) -> Result<api::chat::PostMessageResponse, api::chat::PostMessageError<reqwest::Error>> {
         // fixup the channel id if channel is: `#<channel>`
         let chan_id = match channel.starts_with("#") {
             true => {
@@ -675,7 +675,7 @@ impl RtmClient {
 
     /// Wraps https://api.slack.com/methods/chat.delete to delete a message
     /// See the slack api docs for timestamp formatting.
-    pub fn delete_message(&self, channel: &str, timestamp: &str) -> Result<api::chat::DeleteResponse, Error> {
+    pub fn delete_message(&self, channel: &str, timestamp: &str) -> Result<api::chat::DeleteResponse, api::chat::DeleteError<reqwest::Error>> {
         // fixup the channel id if channel is: `#<channel>`
         let chan_id = match channel.starts_with("#") {
             true => {
@@ -693,7 +693,7 @@ impl RtmClient {
 
     /// Wraps https://api.slack.com/methods/channels.mark to set the read cursor in a channel
     /// See the slack api docs for timestamp formatting.
-    pub fn mark(&self, channel: &str, timestamp: &str) -> Result<api::channels::MarkResponse, Error> {
+    pub fn mark(&self, channel: &str, timestamp: &str) -> Result<api::channels::MarkResponse, api::chat::MarkError<reqwest::Error>> {
         // fixup the channel id if channel is: `#<channel>`
         let chan_id = match channel.starts_with("#") {
             true => {
@@ -712,7 +712,7 @@ impl RtmClient {
     /// Wraps https://api.slack.com/methods/channels.setTopic
     /// if channel starts with a # then it will be looked up with get_channel_id
     /// topic will be json escaped.
-    pub fn set_topic(&self, channel: &str, topic: &str) -> Result<api::channels::SetTopicResponse, Error> {
+    pub fn set_topic(&self, channel: &str, topic: &str) -> Result<api::channels::SetTopicResponse, api::chat::SetTopicError<reqwest::Error>> {
         // fixup the channel id if channel is: `#<channel>`
         let chan_id = match channel.starts_with("#") {
             true => {
@@ -736,7 +736,7 @@ impl RtmClient {
     /// Wraps https://api.slack.com/methods/channels.setPurpose
     /// if channel starts with a # then it will be looked up with get_channel_id
     /// purpose will be json escaped.
-    pub fn set_purpose(&self, channel: &str, purpose: &str) -> Result<api::channels::SetPurposeResponse, Error> {
+    pub fn set_purpose(&self, channel: &str, purpose: &str) -> Result<api::channels::SetPurposeResponse, api::chat::SetPurposeError<reqwest::Error>> {
         // fixup the channel id if channel is: `#<channel>`
         let chan_id = match channel.starts_with("#") {
             true => {
@@ -759,7 +759,7 @@ impl RtmClient {
 
     /// Wraps https://api.slack.com/methods/reactions.add to add an emoji reaction to a message
     /// if channel starts with a # then it will be looked up with get_channel_id
-    pub fn add_reaction_timestamp(&self, emoji_name: &str, channel: &str, timestamp: &str) -> Result<api::reactions::AddResponse, Error> {
+    pub fn add_reaction_timestamp(&self, emoji_name: &str, channel: &str, timestamp: &str) -> Result<api::reactions::AddResponse, api::reactions::AddError<reqwest::Error>> {
         // fixup the channel id if channel is: `#<channel>`
         let chan_id = match channel.starts_with("#") {
             true => {
@@ -771,25 +771,25 @@ impl RtmClient {
             false => channel,
         };
         let client = reqwest::Client::new().unwrap();
-        let request = api::reactions::AddRequest {name: emoji_name, file: None, file_comment: None, channel: chan_id, timestamp: timestamp};
+        let request = api::reactions::AddRequest {name: emoji_name, file: None, file_comment: None, channel: Some(chan_id), timestamp: Some(timestamp)};
         api::reactions::add(&client,
                             &self.token,
                             &request)
     }
 
     /// Wraps https://api.slack.com/methods/reactions.add to add an emoji reaction to a file
-    pub fn add_reaction_file(&self, emoji_name: &str, file: &str) -> Result<api::reactions::AddResponse, Error> {
+    pub fn add_reaction_file(&self, emoji_name: &str, file: &str) -> Result<api::reactions::AddResponse, api::chat::AddError<reqwest::Error>> {
         let client = reqwest::Client::new().unwrap();
-        let request = api::reactions::AddRequest {name: emoji_name, file: file, file_comment: None, channel: None, timestamp: None};
+        let request = api::reactions::AddRequest {name: emoji_name, file: Some(file), file_comment: None, channel: None, timestamp: None};
         api::reactions::add(&client,
                             &self.token,
                             &request)
     }
 
     /// Wraps https://api.slack.com/methods/reactions.add to add an emoji reaction to a file comment
-    pub fn add_reaction_file_comment(&self, emoji_name: &str, file_comment: &str) -> Result<api::reactions::AddResponse, Error> {
+    pub fn add_reaction_file_comment(&self, emoji_name: &str, file_comment: &str) -> Result<api::reactions::AddResponse, api::chat::AddError<reqwest::Error>> {
         let client = reqwest::Client::new().unwrap();
-        let request = api::reactions::AddRequest {name: emoji_name, file: None, file_comment: file_comment, channel: None, timestamp: None};
+        let request = api::reactions::AddRequest {name: emoji_name, file: None, file_comment: Some(file_comment), channel: None, timestamp: None};
         api::reactions::add(&client,
                             &self.token,
                             &request)
