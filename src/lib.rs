@@ -854,15 +854,12 @@ impl RtmClient {
                       oldest: Option<&str>,
                       inclusive: Option<bool>,
                       count: Option<u32>)
-                      -> Result<api::im::HistoryResponse, Error> {
+                      -> Result<api::im::HistoryResponse, api::im::HistoryError<_>> {
         let client = reqwest::Client::new().unwrap();
+        let request = api::im::HistoryResponse {channel: channel_id, latest: latest, oldest: oldest, inclusive: inclusive, count: count, unreads: None};
         api::im::history(&client,
                          &self.token,
-                         channel_id,
-                         latest,
-                         oldest,
-                         inclusive,
-                         count)
+                         &request)
     }
 
     /// Wraps https://api.slack.com/methods/im.list to get the list of all open direct message
