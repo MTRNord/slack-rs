@@ -810,7 +810,7 @@ impl RtmClient {
             false => channel,
         };
         let client = reqwest::Client::new().unwrap();
-        let request = api::chat::UpdateRequest {ts: timestamp, channel: chan_id, text: json_payload, attachments: attachments, parse: None, link_names: None, as_user: None}
+        let request = api::chat::UpdateRequest {ts: timestamp, channel: chan_id, text: json_payload, attachments: attachments, parse: None, link_names: None, as_user: None};
         api::chat::update(&client,
                           &self.token,
                           &request)
