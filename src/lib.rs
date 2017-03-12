@@ -342,10 +342,10 @@ impl RtmClient {
     pub fn login(&mut self) -> Result<(WsClient, mpsc::Receiver<WsMessage>), Error> {
         let client = reqwest::Client::new().unwrap();
         let request = api::rtm::StartRequest::default();
-        let start = try!(api::rtm::start(&client, &self.token, &request));
+        let start = api::rtm::start(&client, &self.token, &request);
 
         // websocket url
-        let wss_url = try!(reqwest::Url::parse(&start.url.unwrap()));
+        let wss_url = reqwest::Url::parse(&start.url.unwrap());
 
         // update id hashmaps
         for ref channel_raw in start.channels.iter() {
@@ -572,7 +572,7 @@ impl RtmClient {
     pub fn list_users(&mut self) -> Result<Vec<User>, Error> {
         let client = reqwest::Client::new().unwrap();
         let request = api::users::ListRequest {presence: None};
-        let data = try!(api::users::list(&client, &self.token, &request));
+        let data = api::users::list(&client, &self.token, &request);
 
         Ok(data.members.unwrap())
     }
@@ -581,7 +581,7 @@ impl RtmClient {
     pub fn list_channels(&mut self) -> Result<Vec<Channel>, Error> {
         let client = reqwest::Client::new().unwrap();
         let request = api::users::ListRequest {presence: None};
-        let data = try!(api::channels::list(&client, &self.token, &request));
+        let data = api::channels::list(&client, &self.token, &request);
 
         Ok(data.channels.unwrap())
     }
@@ -589,8 +589,8 @@ impl RtmClient {
     /// Uses https://api.slack.com/methods/groups.list to get a list of groups
     pub fn list_groups(&mut self) -> Result<Vec<Group>, Error> {
         let client = reqwest::Client::new().unwrap();
-        let request = api::users::ListRequest {presence: None};
-        let data = try!(api::groups::list(&client, &self.token, &request));
+        let request = api::groups::ListRequest {exclude_archived: None};
+        let data = api::groups::list(&client, &self.token, &request);
 
         Ok(data.groups.unwrap())
     }
@@ -670,7 +670,7 @@ impl RtmClient {
                                                     };
         api::chat::post_message(&client,
                                 &self.token,
-                                &request).map_err(|e| e.into())
+                                &request);
     }
 
     /// Wraps https://api.slack.com/methods/chat.delete to delete a message
@@ -687,8 +687,8 @@ impl RtmClient {
             false => channel,
         };
         let client = reqwest::Client::new().unwrap();
-        let request = api::chat::DeleteRequest {ts: String::new(), channel: chan_id, as_user: None};
-        api::chat::delete(&client, &self.token, &request).map_err(|e| e.into())
+        let request = api::chat::DeleteRequest {ts: &String::new(), channel: chan_id, as_user: None};
+        api::chat::delete(&client, &self.token, &request)
     }
 
     /// Wraps https://api.slack.com/methods/channels.mark to set the read cursor in a channel
@@ -705,7 +705,8 @@ impl RtmClient {
             false => channel,
         };
         let client = reqwest::Client::new().unwrap();
-        api::channels::mark(&client, &self.token, chan_id, timestamp).map_err(|e| e.into())
+        let request = api::channels::MarkRequest {channel: chan_id, ts: timestamp};
+        api::channels::mark(&client, &self.token, &request)
     }
 
     /// Wraps https://api.slack.com/methods/channels.setTopic
@@ -726,10 +727,10 @@ impl RtmClient {
         // we'll need to slice out the quotes around it afterwards
         let escaped_topic = format!("{}", json::as_json(&topic));
         let client = reqwest::Client::new().unwrap();
+        let request = api::channels::SetTopicRequest {channel: chan_id, topic:  &escaped_topic[1..escaped_topic.len() - 1]};
         api::channels::set_topic(&client,
                                  &self.token,
-                                 chan_id,
-                                 &escaped_topic[1..escaped_topic.len() - 1]).map_err(|e| e.into())
+                                 &request)
     }
 
     /// Wraps https://api.slack.com/methods/channels.setPurpose
@@ -750,10 +751,10 @@ impl RtmClient {
         // we'll need to slice out the quotes around it afterwards
         let escaped_purpose = format!("{}", json::as_json(&purpose));
         let client = reqwest::Client::new().unwrap();
+        let request = api::channels::SetPurposeRequest {channel: chan_id, purpose:  &escaped_purpose[1..escaped_purpose.len() - 1]};
         api::channels::set_purpose(&client,
                                    &self.token,
-                                   chan_id,
-                                   &escaped_purpose[1..escaped_purpose.len() - 1]).map_err(|e| e.into())
+                                   &request)
     }
 
     /// Wraps https://api.slack.com/methods/reactions.add to add an emoji reaction to a message
@@ -770,37 +771,28 @@ impl RtmClient {
             false => channel,
         };
         let client = reqwest::Client::new().unwrap();
+        let request = api::reactions::AddRequest {name: emoji_name, file: None, file_comment: None, channel: chan_id, timestamp: timestamp};
         api::reactions::add(&client,
                             &self.token,
-                            emoji_name,
-                            None,
-                            None,
-                            Some(chan_id),
-                            Some(timestamp)).map_err(|e| e.into())
+                            &request)
     }
 
     /// Wraps https://api.slack.com/methods/reactions.add to add an emoji reaction to a file
     pub fn add_reaction_file(&self, emoji_name: &str, file: &str) -> Result<api::reactions::AddResponse, Error> {
         let client = reqwest::Client::new().unwrap();
+        let request = api::reactions::AddRequest {name: emoji_name, file: file, file_comment: None, channel: None, timestamp: None};
         api::reactions::add(&client,
                             &self.token,
-                            emoji_name,
-                            Some(file),
-                            None,
-                            None,
-                            None).map_err(|e| e.into())
+                            &request)
     }
 
     /// Wraps https://api.slack.com/methods/reactions.add to add an emoji reaction to a file comment
     pub fn add_reaction_file_comment(&self, emoji_name: &str, file_comment: &str) -> Result<api::reactions::AddResponse, Error> {
         let client = reqwest::Client::new().unwrap();
+        let request = api::reactions::AddRequest {name: emoji_name, file: None, file_comment: file_comment, channel: None, timestamp: None};
         api::reactions::add(&client,
                             &self.token,
-                            emoji_name,
-                            None,
-                            Some(file_comment),
-                            None,
-                            None).map_err(|e| e.into())
+                            &request)
     }
 
     /// Wraps https://api.slack.com/methods/chat.update
