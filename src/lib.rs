@@ -580,7 +580,8 @@ impl RtmClient {
     /// Uses https://api.slack.com/methods/channels.list to get a list of channels
     pub fn list_channels(&mut self) -> Result<Vec<Channel>, Error> {
         let client = reqwest::Client::new();
-        let data = try!(api::channels::list(&client, &self.token, None));
+        let request = api::users::ListRequest {presence: None};
+        let data = try!(api::channels::list(&client, &self.token, &request));
 
         Ok(data.channels.unwrap())
     }
@@ -588,7 +589,8 @@ impl RtmClient {
     /// Uses https://api.slack.com/methods/groups.list to get a list of groups
     pub fn list_groups(&mut self) -> Result<Vec<Group>, Error> {
         let client = reqwest::Client::new();
-        let data = try!(api::groups::list(&client, &self.token, None));
+        let request = api::users::ListRequest {presence: None};
+        let data = try!(api::groups::list(&client, &self.token, &request));
 
         Ok(data.groups.unwrap())
     }
@@ -668,7 +670,7 @@ impl RtmClient {
                                                     };
         api::chat::post_message(&client,
                                 &self.token,
-                                request).map_err(|e| e.into())
+                                &request).map_err(|e| e.into())
     }
 
     /// Wraps https://api.slack.com/methods/chat.delete to delete a message
@@ -685,7 +687,8 @@ impl RtmClient {
             false => channel,
         };
         let client = reqwest::Client::new();
-        api::chat::delete(&client, &self.token, chan_id).map_err(|e| e.into())
+        let request = api::chat::DeleteRequest {ts: '', channel: chan_id, as_user: None};
+        api::chat::delete(&client, &self.token, &request).map_err(|e| e.into())
     }
 
     /// Wraps https://api.slack.com/methods/channels.mark to set the read cursor in a channel
@@ -853,7 +856,8 @@ impl RtmClient {
     /// Wraps https://api.slack.com/methods/im.close to close a direct message channel.
     pub fn im_close(&self, channel_id: &str) -> Result<api::im::CloseResponse, Error> {
         let client = reqwest::Client::new();
-        api::im::close(&client, &self.token, channel_id).map_err(|e| e.into())
+        let request = api::im::CloseRequest {channel: channel_id};
+        api::im::close(&client, &self.token, &request).map_err(|e| e.into())
     }
 
     /// Wraps https://api.slack.com/methods/im.history to retrieve the history of messages and
