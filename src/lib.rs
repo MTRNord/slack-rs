@@ -378,12 +378,12 @@ impl RtmClient {
         let res = req.unwrap().send();
 
         // Validate handshake
-        try!(res.validate());
+        try!(res.unwrap().validate());
 
         // setup channels for passing messages
         let (tx, rx) = channel::<WsMessage>();
         self.outs = Some(tx.clone());
-        Ok((res.begin(), rx))
+        Ok((res.unwrap().begin(), rx))
     }
 
     /// Runs the message receive loop
@@ -798,7 +798,7 @@ impl RtmClient {
     /// Wraps https://api.slack.com/methods/chat.update
     /// json_payload can be a json formatted action or simple text that will be posted as a message.
     /// See https://api.slack.com/docs/formatting
-    pub fn update_message(&self, channel: &str, timestamp: &str, json_payload: &str, attachments: Option<&str>) -> Result<api::chat::UpdateResponse, Error> {
+    pub fn update_message(&self, channel: &str, timestamp: &str, json_payload: &str, attachments: Option<&str>) -> Result<api::chat::UpdateResponse, api::chat::UpdateError<reqwest::Error>> {
         // fixup the channel id if channel is: `#<channel>`
         let chan_id = match channel.starts_with("#") {
             true => {
@@ -819,7 +819,8 @@ impl RtmClient {
     /// Wraps https://api.slack.com/methods/im.open to open a direct message channel with a user.
     pub fn im_open(&self, user_id: &str) -> Result<api::im::OpenResponse, Error> {
         let client = reqwest::Client::new().unwrap();
-        api::im::open(&client, &self.token, user_id).map_err(|e| e.into())
+        let request = api::im::OpenRequest {user: user_id, return_im: None};
+        api::im::open(&client, &self.token, &request)
     }
 
     /// Wraps https://api.slack.com/methods/channels.history to retrieve the history of messages and
