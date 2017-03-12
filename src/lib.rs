@@ -840,7 +840,7 @@ impl RtmClient {
     }
 
     /// Wraps https://api.slack.com/methods/im.close to close a direct message channel.
-    pub fn im_close(&self, channel_id: &str) -> Result<api::im::CloseResponse, Error> {
+    pub fn im_close(&self, channel_id: &str) -> Result<api::im::CloseResponse, api::im::CloseError<reqwest::Error>> {
         let client = reqwest::Client::new().unwrap();
         let request = api::im::CloseRequest {channel: channel_id};
         api::im::close(&client, &self.token, &request)
@@ -862,20 +862,20 @@ impl RtmClient {
                          latest,
                          oldest,
                          inclusive,
-                         count).map_err(|e| e.into())
+                         count)
     }
 
     /// Wraps https://api.slack.com/methods/im.list to get the list of all open direct message
     /// channels the user has open.
     pub fn im_list(&self) -> Result<api::im::ListResponse, Error> {
         let client = reqwest::Client::new().unwrap();
-        api::im::list(&client, &self.token).map_err(|e| e.into())
+        api::im::list(&client, &self.token)
     }
 
     /// Wraps https://api.slack.com/methods/im.mark to move the read cursor in a direct message
     /// channel.
     pub fn im_mark(&self, channel_id: &str, timestamp: &str) -> Result<api::im::MarkResponse, Error> {
         let client = reqwest::Client::new().unwrap();
-        api::im::mark(&client, &self.token, channel_id, timestamp).map_err(|e| e.into())
+        api::im::mark(&client, &self.token, channel_id, timestamp)
     }
 }
