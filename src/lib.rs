@@ -347,14 +347,20 @@ impl RtmClient {
         let wss_url = try!(reqwest::Url::parse(&start.url.unwrap()));
 
         // update id hashmaps
-        for ref channel in start.channels.iter() {
-            self.channel_ids.insert(channel.name.clone(), channel.id.clone());
+        for ref channel_raw in start.channels.iter() {
+            for ref channel in channel_raw.iter() {
+                self.channel_ids.insert(channel.name.clone(), channel.id.clone());
+            }
         }
-        for ref group in start.groups.iter() {
-            self.group_ids.insert(group.name.clone(), group.id.clone());
+        for ref group_raw in start.groups.iter() {
+            for ref group in group_raw.iter() {
+                self.group_ids.insert(group.name.clone(), group.id.clone());
+           }
         }
-        for ref user in start.users.iter() {
-            self.user_ids.insert(user.name.clone(), user.id.clone());
+        for ref user_raw in start.users.iter() {
+            for ref user in user_raw.iter() {
+                self.user_ids.insert(user.name.clone(), user.id.clone());
+            }
         }
         // update groups, users, channels:
         self.groups = start.groups.unwrap().clone();
