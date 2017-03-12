@@ -571,7 +571,8 @@ impl RtmClient {
     /// Uses https://api.slack.com/methods/users.list to get a list of users
     pub fn list_users(&mut self) -> Result<Vec<User>, Error> {
         let client = reqwest::Client::new();
-        let data = try!(api::users::list(&client, &self.token, None));
+        let request = api::users::ListRequest {presence: None};
+        let data = try!(api::users::list(&client, &self.token, &request));
 
         Ok(data.members.unwrap())
     }
