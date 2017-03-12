@@ -50,7 +50,7 @@ pub enum Error {
 impl From<reqwest::Error> for Error {
     fn from(err: reqwest::Error) -> Error {
         match err {
-            reqwest::Error::Uri(_) => Error::Url(err),
+            reqwest::Error::HyperError::Uri(_) => Error::Url(err),
             _ => Error::Http(err)
         }
     }
