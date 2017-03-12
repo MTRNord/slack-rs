@@ -375,7 +375,7 @@ impl RtmClient {
         let req = websocket::client::Client::connect(wss_url.unwrap().clone());
 
         // Do websocket handshake.
-        let res = req.send();
+        let res = req.unwrap().send();
 
         // Validate handshake
         try!(res.validate());
