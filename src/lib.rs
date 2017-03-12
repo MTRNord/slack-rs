@@ -687,7 +687,7 @@ impl RtmClient {
             false => channel,
         };
         let client = reqwest::Client::new();
-        let request = api::chat::DeleteRequest {ts: '', channel: chan_id, as_user: None};
+        let request = api::chat::DeleteRequest {ts: String::new(), channel: chan_id, as_user: None};
         api::chat::delete(&client, &self.token, &request).map_err(|e| e.into())
     }
 
