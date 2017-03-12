@@ -649,19 +649,24 @@ impl RtmClient {
             false => channel,
         };
         let client = reqwest::Client::new();
+        let request = api::chat::PostMessageRequest {
+                                                      channel: chan_id,
+                                                      text: json_payload,
+                                                      parse: None,
+                                                      link_names: None,
+                                                      attachments: attachments,
+                                                      unfurl_links: None,
+                                                      unfurl_media: None,
+                                                      username: None,
+                                                      as_user: Some(true),
+                                                      icon_url: None,
+                                                      icon_emoji: None,
+                                                      thread_ts: None,
+                                                      reply_broadcast: None
+                                                    };
         api::chat::post_message(&client,
                                 &self.token,
-                                chan_id,
-                                json_payload,
-                                None,
-                                Some(true),
-                                None,
-                                None,
-                                attachments,
-                                None,
-                                None,
-                                None,
-                                None).map_err(|e| e.into())
+                                request).map_err(|e| e.into())
     }
 
     /// Wraps https://api.slack.com/methods/chat.delete to delete a message
