@@ -854,7 +854,7 @@ impl RtmClient {
                       oldest: Option<&str>,
                       inclusive: Option<bool>,
                       count: Option<u32>)
-                      -> Result<api::im::HistoryResponse, api::im::HistoryError<_>> {
+                      -> Result<api::im::HistoryResponse, api::im::HistoryError> {
         let client = reqwest::Client::new().unwrap();
         let request = api::im::HistoryResponse {channel: channel_id, latest: latest, oldest: oldest, inclusive: inclusive, count: count, unreads: None};
         api::im::history(&client,
