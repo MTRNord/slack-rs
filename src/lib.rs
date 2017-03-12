@@ -817,7 +817,7 @@ impl RtmClient {
     }
 
     /// Wraps https://api.slack.com/methods/im.open to open a direct message channel with a user.
-    pub fn im_open(&self, user_id: &str) -> Result<api::im::OpenResponse, Error> {
+    pub fn im_open(&self, user_id: &str) -> Result<api::im::OpenResponse, api::im::OpenError<reqwest::Error>> {
         let client = reqwest::Client::new().unwrap();
         let request = api::im::OpenRequest {user: user_id, return_im: None};
         api::im::open(&client, &self.token, &request)
@@ -833,13 +833,10 @@ impl RtmClient {
                             count: Option<u32>)
                             -> Result<api::channels::HistoryResponse, Error> {
         let client = reqwest::Client::new().unwrap();
+        let request = api::channels::HistoryRequest {channel: channel_id, latest: latest, oldest: oldest, inclusive: inclusive, count: count, unreads: None};
         api::channels::history(&client,
                                &self.token,
-                               channel_id,
-                               latest,
-                               oldest,
-                               inclusive,
-                               count).map_err(|e| e.into())
+                               &request)
     }
 
     /// Wraps https://api.slack.com/methods/im.close to close a direct message channel.
