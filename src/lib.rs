@@ -831,7 +831,7 @@ impl RtmClient {
                             oldest: Option<&str>,
                             inclusive: Option<bool>,
                             count: Option<u32>)
-                            -> Result<api::channels::HistoryResponse, Error> {
+                            -> Result<api::channels::HistoryResponse, api::channels::HistoryError<reqwest::Error>> {
         let client = reqwest::Client::new().unwrap();
         let request = api::channels::HistoryRequest {channel: channel_id, latest: latest, oldest: oldest, inclusive: inclusive, count: count, unreads: None};
         api::channels::history(&client,
@@ -843,7 +843,7 @@ impl RtmClient {
     pub fn im_close(&self, channel_id: &str) -> Result<api::im::CloseResponse, Error> {
         let client = reqwest::Client::new().unwrap();
         let request = api::im::CloseRequest {channel: channel_id};
-        api::im::close(&client, &self.token, &request).map_err(|e| e.into())
+        api::im::close(&client, &self.token, &request)
     }
 
     /// Wraps https://api.slack.com/methods/im.history to retrieve the history of messages and
